@@ -8,7 +8,7 @@
 
 body {
   margin: 0;
-  background: #fff7ed; /* warm orange-50 */
+  background: #fafaf9; /* stone-50 — warm off-white, not tinted */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

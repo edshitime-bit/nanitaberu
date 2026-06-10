@@ -26,7 +26,7 @@ function Badge({ label, colorClass }) {
 
 function MetaPill({ label }) {
   return (
-    <span className="px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-sm font-medium border border-orange-100">
+    <span className="px-3 py-1.5 bg-stone-100 text-stone-700 rounded-full text-sm font-medium">
       {label}
     </span>
   )
@@ -59,7 +59,7 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
       <div className="flex items-center px-4 py-3 bg-white border-b border-orange-100 shrink-0">
         <button
           onClick={onClose}
-          className="mr-3 w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 text-lg active:bg-orange-200"
+          className="mr-3 w-9 h-9 flex items-center justify-center rounded-full bg-stone-100 text-stone-600 text-lg active:bg-stone-200"
           aria-label="Back"
         >
           ←
@@ -101,7 +101,7 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           {/* Taste / Base */}
           {dish.tastes.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">Taste / Base</p>
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Taste / Base</p>
               <div className="flex flex-wrap gap-1.5">
                 {dish.tastes.map(t => (
                   <span key={t} className="px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-sm font-medium border border-orange-100">
@@ -115,7 +115,7 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           {/* Starch pairing */}
           {dish.starches.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">Starch Pairing</p>
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Starch Pairing</p>
               <div className="flex flex-wrap gap-1.5">
                 {dish.starches.map(s => (
                   <span key={s} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-sm font-medium border border-amber-100">
@@ -129,7 +129,7 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           {/* Key ingredients */}
           {dish.keyIngredients && (
             <div className="mb-4">
-              <p className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-1.5">Key Ingredients</p>
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-1.5">Key Ingredients</p>
               <p className="text-sm text-stone-600 leading-relaxed">{dish.keyIngredients}</p>
             </div>
           )}

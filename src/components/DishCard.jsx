@@ -46,7 +46,7 @@ export function DishCard({ dish, onTap }) {
   return (
     <button
       onClick={onTap}
-      className="w-full text-left bg-white rounded-2xl p-4 shadow-sm border border-orange-100 active:scale-[0.98] transition-transform duration-100"
+      className="w-full text-left bg-white rounded-2xl p-4 shadow-sm border border-stone-100 active:scale-[0.98] transition-transform duration-100"
     >
       {/* Badges */}
       <div className="flex flex-wrap gap-1.5 mb-2">

@@ -7,28 +7,33 @@ const STARCHES = ['Rice', 'Udon', 'Soba', 'Chinese Noodles', 'Pasta', 'Bread', '
 
 const WEIGHT_OPTIONS = [
   { value: 'hearty', label: 'Hearty & filling' },
-  { value: 'light', label: 'Light & fresh' },
+  { value: 'light',  label: 'Light & fresh' },
 ]
 const COOK_TIME_OPTIONS = [
-  { value: 'quick', label: 'Quick  <45 min' },
-  { value: 'medium', label: 'Medium  45–90 min' },
+  { value: 'quick',     label: 'Quick  <45 min' },
+  { value: 'medium',    label: 'Medium  45–90 min' },
   { value: 'leisurely', label: 'Leisurely  2hr+' },
 ]
 const COMPLEXITY_OPTIONS = [
-  { value: 'simple', label: 'Simple' },
+  { value: 'simple',  label: 'Simple' },
   { value: 'complex', label: 'Complex' },
 ]
 const SPICE_OPTIONS = [
-  { value: 'mild', label: 'Mild' },
+  { value: 'mild',      label: 'Mild' },
   { value: 'some_heat', label: 'Some heat' },
-  { value: 'spicy', label: 'Spicy 🌶' },
+  { value: 'spicy',     label: 'Spicy 🌶' },
 ]
 const TEMP_OPTIONS = [
   { value: 'warm', label: 'Warm / hot' },
   { value: 'cool', label: 'Cool / room temp' },
 ]
 
-// ── Chip ─────────────────────────────────────────────────────────────────────
+// ── Design system ─────────────────────────────────────────────────────────────
+// Inspired by Calm / Headspace:
+//   • Orange = interactive / selected only — never used on static text
+//   • Dark charcoal = headings and content
+//   • stone-100 = neutral inactive backgrounds (no coloured borders)
+//   • Accent is earned — used sparingly so it actually signals something
 
 function Chip({ label, active, onPress }) {
   return (
@@ -36,11 +41,8 @@ function Chip({ label, active, onPress }) {
       onClick={onPress}
       className={`
         px-3 py-1.5 rounded-full text-sm font-medium
-        min-h-[36px] select-none transition-all duration-100
-        active:scale-95
-        ${active
-          ? 'bg-orange-500 text-white shadow-sm'
-          : 'bg-white border border-orange-200 text-stone-600'}
+        min-h-[36px] select-none transition-all duration-100 active:scale-95
+        ${active ? 'bg-orange-500 text-white' : 'bg-stone-100 text-stone-600'}
       `}
     >
       {label}
@@ -50,13 +52,12 @@ function Chip({ label, active, onPress }) {
 
 function FilterLabel({ children }) {
   return (
-    <p className="px-4 text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">
+    <p className="px-4 text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">
       {children}
     </p>
   )
 }
 
-// Single-select row (2–3 options, can wrap on small screens)
 function ToggleRow({ options, value, onToggle }) {
   return (
     <div className="flex gap-2 px-4 flex-wrap">
@@ -81,13 +82,13 @@ export function FilterBar({
   const [moreOpen, setMoreOpen] = useState(false)
 
   return (
-    <div className="bg-white border-b border-orange-100 shadow-sm">
+    <div className="bg-white border-b border-stone-100 shadow-sm">
 
-      {/* Header row: app name + dish count + clear all */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2">
+      {/* Header: dark title (not orange) + neutral count + orange "Clear all" CTA */}
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <div className="flex items-baseline gap-2">
-          <span className="text-base font-bold text-orange-500 tracking-tight">何食べる</span>
-          <span className="text-xs text-orange-300 font-medium">
+          <span className="text-lg font-bold text-stone-900 tracking-tight">何食べる</span>
+          <span className="text-xs text-stone-400 font-medium">
             {dishCount} {filters.mainSide === 'main' ? 'main' : 'side'}{dishCount !== 1 ? 's' : ''}
           </span>
         </div>
@@ -101,7 +102,7 @@ export function FilterBar({
         )}
       </div>
 
-      {/* Main / Side segmented toggle */}
+      {/* Main / Side — only ONE is orange at a time, so no visual pile-up */}
       <div className="flex gap-1.5 px-4 mb-3">
         {['main', 'side'].map(val => (
           <button
@@ -109,8 +110,8 @@ export function FilterBar({
             onClick={() => setMainSide(val)}
             className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors duration-100
               ${filters.mainSide === val
-                ? 'bg-orange-500 text-white shadow-sm'
-                : 'bg-orange-50 text-orange-400'}`}
+                ? 'bg-orange-500 text-white'
+                : 'bg-stone-100 text-stone-500'}`}
           >
             {val.charAt(0).toUpperCase() + val.slice(1)}
           </button>
@@ -135,10 +136,10 @@ export function FilterBar({
         ))}
       </div>
 
-      {/* More toggle button */}
+      {/* More toggle — neutral gray, orange badge only when active */}
       <button
         onClick={() => setMoreOpen(o => !o)}
-        className="flex items-center gap-1.5 mx-4 mb-3 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-sm text-orange-600 font-medium active:bg-orange-100 transition-colors"
+        className="flex items-center gap-1.5 mx-4 mb-3 px-3 py-1.5 rounded-full bg-stone-100 text-sm text-stone-600 font-medium active:bg-stone-200 transition-colors"
       >
         <span className="text-xs">{moreOpen ? '▲' : '▼'}</span>
         <span>More filters</span>
@@ -149,9 +150,9 @@ export function FilterBar({
         )}
       </button>
 
-      {/* Extended filters panel */}
+      {/* Extended filters */}
       {moreOpen && (
-        <div className="border-t border-orange-100 pt-3 pb-2 space-y-4">
+        <div className="border-t border-stone-100 pt-3 pb-2 space-y-4">
           <div>
             <FilterLabel>Taste / Base</FilterLabel>
             <div className="chip-row">
@@ -160,7 +161,6 @@ export function FilterBar({
               ))}
             </div>
           </div>
-
           <div>
             <FilterLabel>Starch Pairing</FilterLabel>
             <div className="chip-row">
@@ -169,27 +169,22 @@ export function FilterBar({
               ))}
             </div>
           </div>
-
           <div>
             <FilterLabel>Cook Time</FilterLabel>
             <ToggleRow options={COOK_TIME_OPTIONS} value={filters.cookTime} onToggle={v => toggleSingle('cookTime', v)} />
           </div>
-
           <div>
             <FilterLabel>Complexity</FilterLabel>
             <ToggleRow options={COMPLEXITY_OPTIONS} value={filters.complexity} onToggle={v => toggleSingle('complexity', v)} />
           </div>
-
           <div>
             <FilterLabel>Weight</FilterLabel>
             <ToggleRow options={WEIGHT_OPTIONS} value={filters.weight} onToggle={v => toggleSingle('weight', v)} />
           </div>
-
           <div>
             <FilterLabel>Spice Level</FilterLabel>
             <ToggleRow options={SPICE_OPTIONS} value={filters.spice} onToggle={v => toggleSingle('spice', v)} />
           </div>
-
           <div className="pb-1">
             <FilterLabel>Temperature</FilterLabel>
             <ToggleRow options={TEMP_OPTIONS} value={filters.temperature} onToggle={v => toggleSingle('temperature', v)} />
