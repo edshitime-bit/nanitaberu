@@ -6,6 +6,7 @@ import { useDishes } from './hooks/useDishes'
 import { FilterBar } from './components/FilterBar'
 import { DishCard } from './components/DishCard'
 import { DishDetail } from './components/DishDetail'
+import { AddDishStub } from './components/AddDishStub'
 import { EmptyState } from './components/EmptyState'
 
 export default function App() {
@@ -13,10 +14,7 @@ export default function App() {
   const { filters, toggleMulti, toggleSingle, setMainSide, clearAll, moreActiveCount, hasAnyActiveFilter } = useFilters()
   const { dishes, markCooked } = useDishes(filters)
   const [selectedDish, setSelectedDish] = useState(null)
-
-  function handleToggleMulti(key, value) {
-    toggleMulti(key, value)
-  }
+  const [addingDish, setAddingDish] = useState(false)
 
   function handleMakingTonight(dish) {
     markCooked(dish.id)
@@ -33,11 +31,11 @@ export default function App() {
   }
 
   return (
-    <div className="h-dvh flex flex-col bg-stone-50 max-w-lg mx-auto">
+    <div className="h-dvh flex flex-col bg-stone-50 max-w-lg mx-auto relative">
 
       <FilterBar
         filters={filters}
-        toggleMulti={handleToggleMulti}
+        toggleMulti={toggleMulti}
         toggleSingle={toggleSingle}
         setMainSide={setMainSide}
         moreActiveCount={moreActiveCount}
@@ -46,7 +44,6 @@ export default function App() {
         dishCount={dishes.length}
       />
 
-      {/* Subtle warm gradient behind the dish list */}
       <main
         className="flex-1 overflow-y-auto"
         style={{ background: 'linear-gradient(to bottom, #fafaf9 0%, #fff7ed 100%)' }}
@@ -63,7 +60,7 @@ export default function App() {
               <EmptyState onClearAll={clearAll} />
             </motion.div>
           ) : (
-            <motion.div key="list" className="px-4 pt-4 pb-8 space-y-3">
+            <motion.div key="list" className="px-4 pt-4 pb-28 space-y-3">
               <AnimatePresence mode="popLayout">
                 {dishes.map((dish, index) => (
                   <motion.div
@@ -88,7 +85,20 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      {/* DishDetail slides up as a bottom sheet with spring physics */}
+      {/* Floating action button — the path to add a dish */}
+      <motion.button
+        onClick={() => setAddingDish(true)}
+        whileTap={{ scale: 0.88 }}
+        whileHover={{ scale: 1.08 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+        className="absolute bottom-6 right-4 w-14 h-14 bg-orange-500 text-white rounded-full shadow-lg text-3xl flex items-center justify-center z-30 leading-none"
+        style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+        aria-label="Add a dish"
+      >
+        +
+      </motion.button>
+
+      {/* Dish detail — slides up from bottom */}
       <AnimatePresence>
         {selectedDish && (
           <motion.div
@@ -104,6 +114,22 @@ export default function App() {
               onClose={() => setSelectedDish(null)}
               onMakingTonight={() => handleMakingTonight(selectedDish)}
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add dish — slides up from bottom */}
+      <AnimatePresence>
+        {addingDish && (
+          <motion.div
+            key="add-dish"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+            className="fixed inset-0 z-50 max-w-lg mx-auto"
+          >
+            <AddDishStub onClose={() => setAddingDish(false)} />
           </motion.div>
         )}
       </AnimatePresence>

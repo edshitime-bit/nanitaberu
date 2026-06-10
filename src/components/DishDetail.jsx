@@ -146,12 +146,9 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           )}
 
           {/* Last cooked */}
-          <p className="text-xs mt-2">
-            {lastCooked
-              ? <span className="text-stone-400">{lastCooked}</span>
-              : <span className="text-emerald-500 font-medium">✦ Never cooked — this could be your first time!</span>
-            }
-          </p>
+          {lastCooked && (
+            <p className="text-xs text-stone-400 mt-2">{lastCooked}</p>
+          )}
         </div>
       </div>
 

@@ -89,10 +89,7 @@ export function DishCard({ dish, onTap }) {
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-stone-400">
         {dish.starches.length > 0 && <span>{dish.starches.join(' / ')}</span>}
         <span>{COOK_TIME_LABEL[dish.cookTime]}</span>
-        {lastCooked
-          ? <span>Last cooked {lastCooked}</span>
-          : <span className="text-emerald-500 font-medium">✦ Try it first!</span>
-        }
+        {lastCooked && <span>Last cooked {lastCooked}</span>}
       </div>
     </motion.button>
   )
