@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion'
+
 const CUISINE_COLORS = {
   Japanese: 'bg-red-100 text-red-600',
   Chinese:  'bg-amber-100 text-amber-700',
@@ -9,16 +11,14 @@ const CUISINE_COLORS = {
 }
 
 const PROTEIN_COLORS = {
-  Chicken:   'bg-yellow-100 text-yellow-700',
-  Beef:      'bg-amber-200 text-amber-800',
-  Pork:      'bg-rose-100 text-rose-600',
-  Seafood:   'bg-sky-100 text-sky-700',
-  'Tofu/Veg':'bg-lime-100 text-lime-700',
-  None:      'bg-stone-100 text-stone-500',
+  Chicken:    'bg-yellow-100 text-yellow-700',
+  Beef:       'bg-amber-200 text-amber-800',
+  Pork:       'bg-rose-100 text-rose-600',
+  Seafood:    'bg-sky-100 text-sky-700',
+  'Tofu/Veg': 'bg-lime-100 text-lime-700',
+  None:       'bg-stone-100 text-stone-500',
 }
 
-// Left-border accent colour by cuisine — adds warmth and makes cards
-// scannable by nationality at a glance.
 const CUISINE_BORDER = {
   Japanese: 'border-l-red-400',
   Chinese:  'border-l-amber-400',
@@ -55,16 +55,16 @@ export function DishCard({ dish, onTap }) {
   const accentBorder = CUISINE_BORDER[dish.cuisine] ?? 'border-l-stone-300'
 
   return (
-    <button
+    <motion.button
       onClick={onTap}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
       className={`
         w-full text-left bg-white rounded-2xl p-4
         shadow-[0_2px_12px_rgba(0,0,0,0.07)]
         border border-stone-100 border-l-4 ${accentBorder}
-        active:scale-[0.98] transition-transform duration-100
       `}
     >
-      {/* Badges */}
       <div className="flex flex-wrap gap-1.5 mb-2">
         <Badge label={dish.cuisine} colorClass={CUISINE_COLORS[dish.cuisine] ?? 'bg-stone-100 text-stone-600'} />
         {dish.protein !== 'None' && (
@@ -75,24 +75,17 @@ export function DishCard({ dish, onTap }) {
         )}
       </div>
 
-      {/* Name */}
       <h2 className="text-base font-semibold text-stone-900 mb-2 leading-snug">{dish.name}</h2>
 
-      {/* Taste tags */}
       {dish.tastes.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
           {dish.tastes.slice(0, 4).map(t => (
-            <span key={t} className="text-xs text-orange-700 bg-orange-100 rounded-full px-2 py-0.5 font-medium">
-              {t}
-            </span>
+            <span key={t} className="text-xs text-orange-700 bg-orange-100 rounded-full px-2 py-0.5 font-medium">{t}</span>
           ))}
-          {dish.tastes.length > 4 && (
-            <span className="text-xs text-stone-400">+{dish.tastes.length - 4}</span>
-          )}
+          {dish.tastes.length > 4 && <span className="text-xs text-stone-400">+{dish.tastes.length - 4}</span>}
         </div>
       )}
 
-      {/* Meta row */}
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-stone-400">
         {dish.starches.length > 0 && <span>{dish.starches.join(' / ')}</span>}
         <span>{COOK_TIME_LABEL[dish.cookTime]}</span>
@@ -101,6 +94,6 @@ export function DishCard({ dish, onTap }) {
           : <span className="text-emerald-500 font-medium">✦ Try it first!</span>
         }
       </div>
-    </button>
+    </motion.button>
   )
 }

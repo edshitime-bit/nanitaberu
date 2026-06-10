@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from './hooks/useAuth'
 import { useFilters } from './hooks/useFilters'
 import { useDishes } from './hooks/useDishes'
@@ -9,32 +10,12 @@ import { EmptyState } from './components/EmptyState'
 
 export default function App() {
   const { isAuthenticated } = useAuth()
-
-  const {
-    filters,
-    toggleMulti,
-    toggleSingle,
-    setMainSide,
-    clearAll,
-    moreActiveCount,
-    hasAnyActiveFilter,
-  } = useFilters()
-
+  const { filters, toggleMulti, toggleSingle, setMainSide, clearAll, moreActiveCount, hasAnyActiveFilter } = useFilters()
   const { dishes, markCooked } = useDishes(filters)
-
   const [selectedDish, setSelectedDish] = useState(null)
 
-  // "Any" chips pass '__clear__' — useFilters ignores unknown values,
-  // so we intercept here and directly clear the category array.
   function handleToggleMulti(key, value) {
-    if (value === '__clear__') {
-      // Toggle off each currently active item to reset the array.
-      // Simpler: we keep a separate clearCategory helper — but since
-      // toggleMulti already has the state, we pass a sentinel the hook handles.
-      toggleMulti(key, value)
-    } else {
-      toggleMulti(key, value)
-    }
+    toggleMulti(key, value)
   }
 
   function handleMakingTonight(dish) {
@@ -52,8 +33,8 @@ export default function App() {
   }
 
   return (
-    // h-dvh = dynamic viewport height — correct on iOS Safari (collapsing address bar).
     <div className="h-dvh flex flex-col bg-stone-50 max-w-lg mx-auto">
+
       <FilterBar
         filters={filters}
         toggleMulti={handleToggleMulti}
@@ -65,30 +46,67 @@ export default function App() {
         dishCount={dishes.length}
       />
 
-      {/* Subtle warm-to-cream gradient behind the dish list adds depth without photos */}
-      <main className="flex-1 overflow-y-auto" style={{ background: 'linear-gradient(to bottom, #fafaf9 0%, #fff7ed 100%)' }}>
-        {dishes.length === 0 ? (
-          <EmptyState onClearAll={clearAll} />
-        ) : (
-          <div className="px-4 pt-4 pb-8 space-y-3">
-            {dishes.map(dish => (
-              <DishCard
-                key={dish.id}
-                dish={dish}
-                onTap={() => setSelectedDish(dish)}
-              />
-            ))}
-          </div>
-        )}
+      {/* Subtle warm gradient behind the dish list */}
+      <main
+        className="flex-1 overflow-y-auto"
+        style={{ background: 'linear-gradient(to bottom, #fafaf9 0%, #fff7ed 100%)' }}
+      >
+        <AnimatePresence mode="popLayout">
+          {dishes.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <EmptyState onClearAll={clearAll} />
+            </motion.div>
+          ) : (
+            <motion.div key="list" className="px-4 pt-4 pb-8 space-y-3">
+              <AnimatePresence mode="popLayout">
+                {dishes.map((dish, index) => (
+                  <motion.div
+                    key={dish.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{
+                      layout: { type: 'spring', stiffness: 350, damping: 32 },
+                      opacity: { duration: 0.18 },
+                      y: { type: 'spring', stiffness: 500, damping: 30, delay: Math.min(index * 0.035, 0.25) },
+                      scale: { duration: 0.15 },
+                    }}
+                  >
+                    <DishCard dish={dish} onTap={() => setSelectedDish(dish)} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
-      {selectedDish && (
-        <DishDetail
-          dish={selectedDish}
-          onClose={() => setSelectedDish(null)}
-          onMakingTonight={() => handleMakingTonight(selectedDish)}
-        />
-      )}
+      {/* DishDetail slides up as a bottom sheet with spring physics */}
+      <AnimatePresence>
+        {selectedDish && (
+          <motion.div
+            key="detail"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+            className="fixed inset-0 z-50 max-w-lg mx-auto"
+          >
+            <DishDetail
+              dish={selectedDish}
+              onClose={() => setSelectedDish(null)}
+              onMakingTonight={() => handleMakingTonight(selectedDish)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

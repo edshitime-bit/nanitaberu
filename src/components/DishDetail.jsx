@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion'
+
 const CUISINE_COLORS = {
   Japanese: 'bg-red-100 text-red-600',
   Chinese: 'bg-amber-100 text-amber-700',
@@ -53,7 +55,8 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
   const lastCooked = formatLastCooked(dish.lastCooked)
 
   return (
-    <div className="fixed inset-0 z-50 bg-orange-50 flex flex-col">
+    // Parent (App.jsx) provides fixed inset-0 z-50 via motion.div wrapper
+    <div className="h-full bg-orange-50 flex flex-col">
 
       {/* Top bar */}
       <div className="flex items-center px-4 py-3 bg-white border-b border-orange-100 shrink-0">
@@ -157,12 +160,14 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
         className="absolute bottom-0 left-0 right-0 px-4 pt-3 bg-white border-t border-orange-100"
         style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
       >
-        <button
+        <motion.button
           onClick={onMakingTonight}
-          className="w-full py-4 bg-orange-500 text-white font-bold text-base rounded-2xl active:bg-orange-600 active:scale-[0.98] transition-all duration-100 shadow-sm"
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+          className="w-full py-4 bg-orange-500 text-white font-bold text-base rounded-2xl shadow-sm active:bg-orange-600"
         >
           Making this tonight! 🍳
-        </button>
+        </motion.button>
       </div>
     </div>
   )
