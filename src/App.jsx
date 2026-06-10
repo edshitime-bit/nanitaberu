@@ -65,7 +65,8 @@ export default function App() {
         dishCount={dishes.length}
       />
 
-      <main className="flex-1 overflow-y-auto">
+      {/* Subtle warm-to-cream gradient behind the dish list adds depth without photos */}
+      <main className="flex-1 overflow-y-auto" style={{ background: 'linear-gradient(to bottom, #fafaf9 0%, #fff7ed 100%)' }}>
         {dishes.length === 0 ? (
           <EmptyState onClearAll={clearAll} />
         ) : (

@@ -8,27 +8,7 @@
 
 body {
   margin: 0;
-  background: #fafaf9; /* stone-50 — warm off-white, not tinted */
+  background: #fafaf9;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Horizontal chip scroll rows — no visible scrollbar, smooth on iOS */
-.chip-row {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-  overflow-x: auto;
-  overflow-y: visible;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 2px; /* subtle breathing room */
-}
-.chip-row::-webkit-scrollbar {
-  display: none;
-}
-.chip-row > * {
-  flex-shrink: 0;
 }
