@@ -10,9 +10,9 @@ const CUISINE_COLORS = {
 
 const PROTEIN_COLORS = {
   Chicken: 'bg-yellow-100 text-yellow-700',
-  Beef: 'bg-red-100 text-red-600',
+  Beef: 'bg-amber-200 text-amber-800',
   Pork: 'bg-rose-100 text-rose-600',
-  Seafood: 'bg-cyan-100 text-cyan-700',
+  Seafood: 'bg-sky-100 text-sky-700',
   'Tofu/Veg': 'bg-lime-100 text-lime-700',
 }
 

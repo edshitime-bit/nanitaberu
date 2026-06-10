@@ -8,11 +8,13 @@ const CUISINE_COLORS = {
   American: 'bg-orange-100 text-orange-700',
 }
 
+// Protein colours are intentionally distinct from cuisine colours
+// so the two badge types never look the same on the same card.
 const PROTEIN_COLORS = {
   Chicken: 'bg-yellow-100 text-yellow-700',
-  Beef: 'bg-red-100 text-red-600',
+  Beef: 'bg-amber-200 text-amber-800',      // earthy brown — not red (red = Japanese cuisine)
   Pork: 'bg-rose-100 text-rose-600',
-  Seafood: 'bg-cyan-100 text-cyan-700',
+  Seafood: 'bg-sky-100 text-sky-700',
   'Tofu/Veg': 'bg-lime-100 text-lime-700',
   None: 'bg-stone-100 text-stone-500',
 }
@@ -66,7 +68,7 @@ export function DishCard({ dish, onTap }) {
       {dish.tastes.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
           {dish.tastes.slice(0, 4).map(t => (
-            <span key={t} className="text-xs text-orange-600 bg-orange-50 border border-orange-100 rounded-full px-2 py-0.5">
+            <span key={t} className="text-xs text-orange-700 bg-orange-100 rounded-full px-2 py-0.5 font-medium">
               {t}
             </span>
           ))}
