@@ -53,7 +53,7 @@ export default function App() {
 
   return (
     // h-dvh = dynamic viewport height — correct on iOS Safari (collapsing address bar).
-    <div className="h-dvh flex flex-col bg-stone-50 max-w-lg mx-auto">
+    <div className="h-dvh flex flex-col bg-orange-50 max-w-lg mx-auto">
       <FilterBar
         filters={filters}
         toggleMulti={handleToggleMulti}

@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* ── Base resets ──────────────────────────────────────────────────────────── */
-
 *,
 *::before,
 *::after {
@@ -10,19 +8,27 @@
 
 body {
   margin: 0;
-  background: #fafaf9; /* stone-50 */
+  background: #fff7ed; /* warm orange-50 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Utility: hide scrollbars while keeping scroll functionality ──────────── */
-/* Used on horizontal chip rows so the scroll handle doesn't appear on iOS.  */
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
+/* Horizontal chip scroll rows — no visible scrollbar, smooth on iOS */
+.chip-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 2px; /* subtle breathing room */
 }
-
-.scrollbar-hide::-webkit-scrollbar {
+.chip-row::-webkit-scrollbar {
   display: none;
+}
+.chip-row > * {
+  flex-shrink: 0;
 }

@@ -1,23 +1,19 @@
-// Full-screen detail view — renders over the main list as a fixed overlay.
-// "Making this tonight!" logs today's date, clears filters, and returns to list.
-
 const CUISINE_COLORS = {
-  Japanese: 'bg-red-100 text-red-700',
-  Chinese: 'bg-orange-100 text-orange-700',
+  Japanese: 'bg-red-100 text-red-600',
+  Chinese: 'bg-amber-100 text-amber-700',
   Korean: 'bg-pink-100 text-pink-700',
   Italian: 'bg-green-100 text-green-700',
   French: 'bg-blue-100 text-blue-700',
   Thai: 'bg-emerald-100 text-emerald-700',
-  American: 'bg-amber-100 text-amber-700',
+  American: 'bg-orange-100 text-orange-700',
 }
 
 const PROTEIN_COLORS = {
   Chicken: 'bg-yellow-100 text-yellow-700',
-  Beef: 'bg-red-100 text-red-700',
-  Pork: 'bg-rose-100 text-rose-700',
+  Beef: 'bg-red-100 text-red-600',
+  Pork: 'bg-rose-100 text-rose-600',
   Seafood: 'bg-cyan-100 text-cyan-700',
   'Tofu/Veg': 'bg-lime-100 text-lime-700',
-  None: 'bg-stone-100 text-stone-500',
 }
 
 function Badge({ label, colorClass }) {
@@ -30,14 +26,14 @@ function Badge({ label, colorClass }) {
 
 function MetaPill({ label }) {
   return (
-    <span className="px-3 py-1 bg-stone-100 text-stone-600 rounded-full text-sm font-medium">
+    <span className="px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-sm font-medium border border-orange-100">
       {label}
     </span>
   )
 }
 
 function formatLastCooked(dateStr) {
-  if (!dateStr) return 'Never cooked'
+  if (!dateStr) return null
   const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86_400_000)
   if (days === 0) return 'Cooked today'
   if (days === 1) return 'Cooked yesterday'
@@ -48,24 +44,27 @@ function formatLastCooked(dateStr) {
 }
 
 const WEIGHT_LABEL = { hearty: 'Hearty & filling', light: 'Light & fresh' }
-const COOK_TIME_LABEL = { quick: 'Quick (<45 min)', leisurely: 'Leisurely (1hr+)' }
+const COOK_TIME_LABEL = { quick: 'Quick  <45 min', medium: 'Medium  45–90 min', leisurely: 'Leisurely  2hr+' }
+const COMPLEXITY_LABEL = { simple: 'Simple', complex: 'Complex' }
 const SPICE_LABEL = { mild: 'Mild', some_heat: 'Some heat', spicy: 'Spicy 🌶' }
 const TEMP_LABEL = { warm: 'Warm / hot', cool: 'Cool / room temp' }
 
 export function DishDetail({ dish, onClose, onMakingTonight }) {
-  return (
-    <div className="fixed inset-0 z-50 bg-stone-50 flex flex-col">
+  const lastCooked = formatLastCooked(dish.lastCooked)
 
-      {/* Sticky top bar */}
-      <div className="flex items-center px-4 py-3 bg-white border-b border-stone-100 shrink-0">
+  return (
+    <div className="fixed inset-0 z-50 bg-orange-50 flex flex-col">
+
+      {/* Top bar */}
+      <div className="flex items-center px-4 py-3 bg-white border-b border-orange-100 shrink-0">
         <button
           onClick={onClose}
-          className="mr-3 w-9 h-9 flex items-center justify-center rounded-full bg-stone-100 text-stone-600 text-lg active:bg-stone-200"
+          className="mr-3 w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 text-lg active:bg-orange-200"
           aria-label="Back"
         >
           ←
         </button>
-        <h1 className="flex-1 text-base font-semibold text-stone-900 leading-tight truncate">
+        <h1 className="flex-1 text-base font-bold text-stone-900 leading-tight truncate">
           {dish.name}
         </h1>
       </div>
@@ -74,24 +73,26 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 pt-5 pb-32">
 
-          {/* Cuisine + protein badges */}
+          {/* Badges */}
           <div className="flex flex-wrap gap-2 mb-4">
             <Badge label={dish.cuisine} colorClass={CUISINE_COLORS[dish.cuisine] ?? 'bg-stone-100 text-stone-600'} />
             {dish.protein !== 'None' && (
               <Badge label={dish.protein} colorClass={PROTEIN_COLORS[dish.protein] ?? 'bg-stone-100 text-stone-600'} />
             )}
+            {dish.complexity === 'complex' && (
+              <Badge label="Complex" colorClass="bg-purple-100 text-purple-600" />
+            )}
           </div>
 
           {/* Description */}
           {dish.description && (
-            <p className="text-stone-600 text-sm leading-relaxed mb-5">
-              {dish.description}
-            </p>
+            <p className="text-stone-600 text-sm leading-relaxed mb-5">{dish.description}</p>
           )}
 
-          {/* Meta pills grid */}
+          {/* Meta pills */}
           <div className="flex flex-wrap gap-2 mb-5">
             <MetaPill label={COOK_TIME_LABEL[dish.cookTime]} />
+            <MetaPill label={COMPLEXITY_LABEL[dish.complexity]} />
             <MetaPill label={WEIGHT_LABEL[dish.weight]} />
             <MetaPill label={SPICE_LABEL[dish.spice]} />
             <MetaPill label={TEMP_LABEL[dish.temperature]} />
@@ -100,10 +101,10 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           {/* Taste / Base */}
           {dish.tastes.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Taste / Base</p>
+              <p className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">Taste / Base</p>
               <div className="flex flex-wrap gap-1.5">
                 {dish.tastes.map(t => (
-                  <span key={t} className="px-3 py-1 bg-violet-50 text-violet-700 rounded-full text-sm font-medium border border-violet-100">
+                  <span key={t} className="px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-sm font-medium border border-orange-100">
                     {t}
                   </span>
                 ))}
@@ -114,7 +115,7 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           {/* Starch pairing */}
           {dish.starches.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Starch Pairing</p>
+              <p className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">Starch Pairing</p>
               <div className="flex flex-wrap gap-1.5">
                 {dish.starches.map(s => (
                   <span key={s} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-sm font-medium border border-amber-100">
@@ -128,7 +129,7 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           {/* Key ingredients */}
           {dish.keyIngredients && (
             <div className="mb-4">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-1.5">Key Ingredients</p>
+              <p className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-1.5">Key Ingredients</p>
               <p className="text-sm text-stone-600 leading-relaxed">{dish.keyIngredients}</p>
             </div>
           )}
@@ -142,20 +143,23 @@ export function DishDetail({ dish, onClose, onMakingTonight }) {
           )}
 
           {/* Last cooked */}
-          <p className="text-xs text-stone-400 mt-2">
-            {formatLastCooked(dish.lastCooked)}
+          <p className="text-xs mt-2">
+            {lastCooked
+              ? <span className="text-stone-400">{lastCooked}</span>
+              : <span className="text-emerald-500 font-medium">✦ Never cooked — this could be your first time!</span>
+            }
           </p>
         </div>
       </div>
 
-      {/* Sticky CTA — fixed to bottom with safe area padding for iOS */}
+      {/* Sticky CTA */}
       <div
-        className="absolute bottom-0 left-0 right-0 px-4 pt-3 pb-6 bg-white border-t border-stone-100"
+        className="absolute bottom-0 left-0 right-0 px-4 pt-3 bg-white border-t border-orange-100"
         style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
       >
         <button
           onClick={onMakingTonight}
-          className="w-full py-4 bg-violet-600 text-white font-bold text-base rounded-2xl active:bg-violet-700 active:scale-[0.98] transition-all duration-100"
+          className="w-full py-4 bg-orange-500 text-white font-bold text-base rounded-2xl active:bg-orange-600 active:scale-[0.98] transition-all duration-100 shadow-sm"
         >
           Making this tonight! 🍳
         </button>

@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react'
 
-// mainSide always has a value (defaults to 'main') — it always constrains.
-// All other filters start unset — unset means no constraint (PRD §4).
 const INITIAL_FILTERS = {
   mainSide: 'main',
   proteins: [],
@@ -10,6 +8,7 @@ const INITIAL_FILTERS = {
   starches: [],
   weight: null,
   cookTime: null,
+  complexity: null,
   spice: null,
   temperature: null,
 }
@@ -17,7 +16,6 @@ const INITIAL_FILTERS = {
 export function useFilters() {
   const [filters, setFilters] = useState(INITIAL_FILTERS)
 
-  // Toggle a value in a multi-select array (OR logic within category).
   // Passing '__clear__' resets the category to [] ("Any" chip behaviour).
   const toggleMulti = useCallback((key, value) => {
     if (value === '__clear__') {
@@ -32,7 +30,7 @@ export function useFilters() {
     }))
   }, [])
 
-  // Toggle a single-select value — tapping the active value clears it.
+  // Tapping the active value clears it back to null.
   const toggleSingle = useCallback((key, value) => {
     setFilters(f => ({ ...f, [key]: f[key] === value ? null : value }))
   }, [])
@@ -43,20 +41,14 @@ export function useFilters() {
 
   const clearAll = useCallback(() => setFilters(INITIAL_FILTERS), [])
 
-  // Count of active extended-panel filters for the 'More' badge.
   const moreActiveCount = [
     filters.tastes.length > 0,
     filters.starches.length > 0,
     filters.weight !== null,
     filters.cookTime !== null,
+    filters.complexity !== null,
     filters.spice !== null,
     filters.temperature !== null,
-  ].filter(Boolean).length
-
-  // Count of active quick filters (excluding mainSide which is always set).
-  const quickActiveCount = [
-    filters.proteins.length > 0,
-    filters.cuisines.length > 0,
   ].filter(Boolean).length
 
   const hasAnyActiveFilter =
@@ -71,7 +63,6 @@ export function useFilters() {
     setMainSide,
     clearAll,
     moreActiveCount,
-    quickActiveCount,
     hasAnyActiveFilter,
   }
 }
