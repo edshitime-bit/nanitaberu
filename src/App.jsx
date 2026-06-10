@@ -1,122 +1,93 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useAuth } from './hooks/useAuth'
+import { useFilters } from './hooks/useFilters'
+import { useDishes } from './hooks/useDishes'
+import { FilterBar } from './components/FilterBar'
+import { DishCard } from './components/DishCard'
+import { DishDetail } from './components/DishDetail'
+import { EmptyState } from './components/EmptyState'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const { isAuthenticated } = useAuth()
+
+  const {
+    filters,
+    toggleMulti,
+    toggleSingle,
+    setMainSide,
+    clearAll,
+    moreActiveCount,
+    hasAnyActiveFilter,
+  } = useFilters()
+
+  const { dishes, markCooked } = useDishes(filters)
+
+  const [selectedDish, setSelectedDish] = useState(null)
+
+  // "Any" chips pass '__clear__' — useFilters ignores unknown values,
+  // so we intercept here and directly clear the category array.
+  function handleToggleMulti(key, value) {
+    if (value === '__clear__') {
+      // Toggle off each currently active item to reset the array.
+      // Simpler: we keep a separate clearCategory helper — but since
+      // toggleMulti already has the state, we pass a sentinel the hook handles.
+      toggleMulti(key, value)
+    } else {
+      toggleMulti(key, value)
+    }
+  }
+
+  function handleMakingTonight(dish) {
+    markCooked(dish.id)
+    clearAll()
+    setSelectedDish(null)
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="h-dvh flex items-center justify-center bg-stone-50">
+        <p className="text-stone-400 text-sm">Authentication coming in Phase 4.</p>
+      </div>
+    )
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    // h-dvh = dynamic viewport height — correct on iOS Safari (collapsing address bar).
+    <div className="h-dvh flex flex-col bg-stone-50 max-w-lg mx-auto">
+      <FilterBar
+        filters={filters}
+        toggleMulti={handleToggleMulti}
+        toggleSingle={toggleSingle}
+        setMainSide={setMainSide}
+        moreActiveCount={moreActiveCount}
+        hasAnyActiveFilter={hasAnyActiveFilter}
+        clearAll={clearAll}
+        dishCount={dishes.length}
+      />
 
-      <div className="ticks"></div>
+      <main className="flex-1 overflow-y-auto">
+        {dishes.length === 0 ? (
+          <EmptyState onClearAll={clearAll} />
+        ) : (
+          <div className="px-4 pt-4 pb-8 space-y-3">
+            {dishes.map(dish => (
+              <DishCard
+                key={dish.id}
+                dish={dish}
+                onTap={() => setSelectedDish(dish)}
+              />
+            ))}
+          </div>
+        )}
+      </main>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      {selectedDish && (
+        <DishDetail
+          dish={selectedDish}
+          onClose={() => setSelectedDish(null)}
+          onMakingTonight={() => handleMakingTonight(selectedDish)}
+        />
+      )}
+    </div>
   )
 }
-
-export default App
